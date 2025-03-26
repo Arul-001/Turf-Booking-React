@@ -1,94 +1,122 @@
 import React from 'react';
+import { useState } from "react";
 import { Link } from 'react-router-dom';
+import service_image_1 from "../assets/service-back.png";
+import service_image_2 from "../assets/service-back2.png";
+import easy_book from "../assets/easy-book.png"
+import schedule from "../assets/schedule.png";
+import local from "../assets/local.png";
+import delivery from "../assets/delivery.png";
+import real_time from "../assets/real-time.png";
+import selection from "../assets/selection.png";
 const Home = () => {
+    const [openIndex, setOpenIndex] = useState(null);
+
+  const toggleFAQ = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  const faqs = [
+    { question: "How do I book a product or turf?", answer: "For products, add them to your cart and complete checkout. For turfs, select your preferred turf, choose a time slot, and confirm your booking." },
+    { question: "How long does delivery take?", answer: "Delivery times vary based on location, but most orders arrive within 24-48 hours." },
+    { question: "Can I cancel or reschedule my booking?", answer: "Yes, you can reschedule or cancel turf bookings up to 24 hours before your session." },
+    { question: "Do I need to bring my own equipment?", answer: "Some turfs provide equipment, but it’s best to check the listing details." },
+  ];
   return (
+  
     <main className="container">
-      {/* Banner Section */}
       <section className="index-head">
         <div className="banner">
           <h1>Welcome to Book N Play</h1>
           <p>Your one-stop solution for booking sports turfs and buying sports equipment!</p>
         </div>
       </section>
-
-      {/* Services Section */}
       <section className="service">
-        <h1>Our Services</h1>
-        <p>
-          Book a Turf or Play Area: Find the perfect venue for your next game.
-          Choose from a variety of indoor and outdoor turfs based on your
-          location, sport type, and availability.
-        </p>
-        <p>
-          Shop Sports Equipment: Browse our categories for a wide range of
-          quality sports gear at competitive prices.
-        </p>
-      </section>
+        <div className="split">
+          <img src={service_image_1} alt="Image not available" />
+        </div>
+        <div className="split hero-content">
+        <h1>Book Your Perfect Turf Instantly!</h1>
+        <p>Find and reserve the best sports turfs near you with ease. Enjoy a seamless booking experience and exclusive discounts on group reservations.</p>
+        <Link to ="/book-slot"><button className="hero-button" >Book Now</button></Link>
+      </div>
 
-      {/* Turfs & Offers Section */}
-      <section className="turfs-offers">
-        <div className="turfs">
-          <h2>Featured Turfs</h2>
-          <div className="rows">
-            <div className="turfs-col">
-              <h3>Football Turf (Outdoor)</h3>
-              <p>Location: Salem</p>
-              <p>Price: Starting from 500/hour</p>
-            </div>
-            <div className="turfs-col">
-              <h3>Indoor Badminton Court</h3>
-              <p>Location: Coimbatore</p>
-              <p>Price: Starting from 700/hour</p>
-            </div>
-            <div className="turfs-col">
-              <h3>Tennis Court (Outdoor)</h3>
-              <p>Location: Trichy</p>
-              <p>Price: Starting from 400/hour</p>
-            </div>
-            <Link to="/book-slot" className="button">View More Turfs</Link>
-          </div>
+      </section>
+    <section className="features">
+      <div className="features-container">
+        <div className="feature">
+          <img src={easy_book} alt="Easy Booking" className="icon" />
+          <h3 className="title">Easy Online Booking </h3>
+          <p className="description">
+          Book your favorite turf in just a few clicks, anytime, anywhere. No more waiting—check availability and confirm your slot instantly!  
+          </p>
         </div>
 
-        <div className="offers">
-          <h2>Special Offers on Sports Equipment</h2>
-          <div className="rows">
-            <div className="offers-col">
-              <h3>Football Starter Kit <br />20% Off</h3>
-              <p>
-                Includes a football, shin guards, and training cones. Perfect
-                for beginners!
-              </p>
-            </div>
-            <div className="offers-col">
-              <h3>Cricket Bat Combo Deal <br />Buy 1, Get 1 Free</h3>
-              <p>Available for a limited time only!</p>
-            </div>
-            <div className="offers-col">
-              <h3>Tennis Gear Bundle <br />15% Off</h3>
-              <p>Includes rackets, balls, and grip tapes from top brands.</p>
-            </div>
-            <Link to="/products" className="button">Shop Now</Link>
-          </div>
+        <div className="feature">
+          <img src={schedule} alt="Schedule" className="icon" />
+          <h3 className="title">Flexible Scheduling</h3>
+          <p className="description">
+          Choose your preferred time slots based on real-time availability. Reschedule or cancel bookings with ease through the platform.</p>
+        </div>
+
+        <div className="feature">
+          <img src={real_time} alt="Real time Availability" className="icon" />
+          <h3 className="title">Real-Time Availability & Discounts</h3>
+          <p className="description">
+          View real-time slot availability to plan your games in advance. Get exclusive discounts on advance bookings and group reservations.
+          </p>
+        </div>
+      </div>
+    </section>
+    <section className="service">
+      <div className="split hero-content">
+        <h1>Shop Local, Get It Fast!</h1>
+        <p>Find and buy products from your nearest stores with ease. Enjoy quick delivery, fresh items, and great deals—all while supporting local businesses.</p>
+        <Link to="/products"><button className="hero-button">Shop Now</button></Link>
+      </div> 
+        <div className="split">
+          <img src={service_image_2} alt="Image not available" />
         </div>
       </section>
-
-      {/* Why Choose Us & Reviews Section */}
-      <section className="choose-customes">
-        <div className="choose-customes-col">
-          <h2>Why Choose Us?</h2>
-          <ul>
-            <li>Easy Booking Process: Find and book your turf with just a few clicks.</li>
-            <li>Top-Quality Equipment: Premium gear at unbeatable prices.</li>
-            <li>Wide Range of Venues: Various indoor and outdoor venues.</li>
-            <li>Secure Payments: Safe and reliable payment process.</li>
-          </ul>
+    <section className="features">
+      <div className="features-container">
+        <div className="feature">
+          <img src={selection} alt="Selection of Local Products" className="icon" />
+          <h3 className="title">Wide Selection of Local Products</h3>
+          <p className="description">
+          Discover a diverse range of products from nearby stores, ensuring you always get the freshest and best-quality items available in your area. Shop conveniently from your favorite local shops without leaving your home. 
+          </p>
         </div>
-        
-        <div className="choose-customes-col">
-          <h2>Customer Reviews</h2>
-          <p>Arun: "Good"</p>
-          <p>Bala: "It's very helpful and easy to book"</p>
-          <Link to="/reviews" className="button">Read More Reviews</Link>
+
+        <div className="feature">
+          <img src={delivery} alt="Fast Delivery" className="icon" />
+          <h3 className="title">Fast and Reliable Delivery</h3>
+          <p className="description">
+          Get your orders delivered quickly with our efficient local delivery service. We partner with nearby stores to ensure that your products reach you on time, reducing long wait times and unnecessary shipping costs. 
+          </p>
+        </div>
+
+        <div className="feature">
+          <img src={local} alt="Local Business Support" className="icon" />
+          <h3 className="title">Support Local Businesses</h3>
+          <p className="description">
+          Every purchase helps support small and local businesses, strengthening your community. By shopping with us, you contribute to the growth of neighborhood stores while enjoying personalized service and exclusive deals.
+          </p>
+        </div>
+      </div>
+    </section>
+    <section className="faq-container">
+        <h2 className="faq-title">FAQs</h2>
+        <div className="faq-list">
+          {faqs.map((faq, index) => (
+            <div key={index} className="faq-item">
+              <button className="faq-question" onClick={() => toggleFAQ(index)}>
+                {faq.question}
+                <span className="faq-icon">{openIndex === index ? "−" : "+"}</span>
+              </button>
+              {openIndex === index && <p className="faq-answer">{faq.answer}</p>}
+            </div>
+          ))}
         </div>
       </section>
     </main>

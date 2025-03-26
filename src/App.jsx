@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import Login from "./components/Login";
@@ -15,6 +16,7 @@ import './index.css';
 const App = () => {
   return (
     <div className="app-container">
+      <ScrollToTop />
       <Navbar />
       <div className="content">
         <Routes>
