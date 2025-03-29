@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import TurfList from "./TurfList"; // Component to display turfs
 import FilterComponent from "./FilterComponent"; // Component for filtering
+import Booking from "./Booking";
 
 const BookSlot = () => {
   // Sample 25 records for turfs
@@ -27,6 +28,7 @@ const BookSlot = () => {
   ];
 
   const [filteredTurfs, setFilteredTurfs] = useState(turfsData);
+  const [selectedTurf, setSelectedTurf] = useState(null);
 
   // Function to handle search
   const handleSearch = (query) => {
@@ -55,6 +57,16 @@ const BookSlot = () => {
 
     setFilteredTurfs(result);
   };
+  // Function to handle selecting a turf
+  const handleSelectTurf = (turf) => {
+    console.log("Selected Turf:", turf); 
+    setSelectedTurf(turf);
+  };
+
+  // Function to close the booking details
+  const handleCloseBooking = () => {
+    setSelectedTurf(null);
+  };
 
   // Function to check if the time falls within the given range
   const checkTime = (filterTime, turfTime) => {
@@ -69,7 +81,9 @@ const BookSlot = () => {
         <h1>Book a Turf or Play Area</h1>
         <p>Select the type of turf, location, and availability below to make your booking.</p>
         <FilterComponent onSearch={handleSearch} onApplyFilters={handleApplyFilters} />
-        <TurfList turfs={filteredTurfs} />
+        {selectedTurf && <Booking turf={selectedTurf} />}
+        <Booking selectedTurf={selectedTurf} onClose={handleCloseBooking} />
+        <TurfList turfs={filteredTurfs} onSelectTurf={handleSelectTurf} />
       </div>
     </section>
   );

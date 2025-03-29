@@ -97,7 +97,7 @@ const FilterComponent = ({ onSearch, onApplyFilters }) => {
             if (e.key === "Enter" && searchTerm) {
               onSearch(searchTerm);
               setSuggestions([]);
-            }
+            }q
           }}
         />
         <button className="filter-button" onClick={toggleFilter}>

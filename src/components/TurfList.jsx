@@ -1,11 +1,11 @@
 import React from "react";
 
-const TurfList = ({ turfs }) => {
+const TurfList = ({ turfs ,onSelectTurf}) => {
   return (
     <div className="turf-container">
       {turfs.length > 0 ? (
         turfs.map((turf, index) => (
-          <div key={index} className="turf-card">
+          <div key={index} className="turf-card"  onClick={() => onSelectTurf(turf)}>
             <img src={turf.image} alt={turf.name} className="turf-image" />
             <div className="turf-info">
               <h2>{turf.name}</h2>
