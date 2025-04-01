@@ -53,7 +53,10 @@ const FilterComponent = ({ onSearch, onApplyFilters }) => {
       time: "",
       priceRange: [0, 3500],
     });
-    onApplyFilters({category: "",
+    setSearchTerm(""); 
+    onApplyFilters({
+      searchTerm: "",
+      category: "",
       city: "",
       sports: "",
       type: "",
@@ -62,6 +65,7 @@ const FilterComponent = ({ onSearch, onApplyFilters }) => {
       day: "",
       time: "",
       priceRange: [0, 3500]});
+      
   };
   // Clear Time
   const handleClearTime = () => {
@@ -77,13 +81,21 @@ const FilterComponent = ({ onSearch, onApplyFilters }) => {
     
     const handleApplyFilters = () => {
       onApplyFilters({ 
-        ...filters, 
+        ...filters,
+        searchTerm: searchTerm.toLowerCase(), 
         minPrice: filters.priceRange[0], 
         maxPrice: filters.priceRange[1] 
       });
       setShowFilters(false)
   };
-
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);onApplyFilters({
+      ...filters,
+      searchTerm: value.toLowerCase(), // Ensure case-insensitive search
+    });
+    setShowFilters(false)
+  };
   return (
     <div className="filter-container">
       <div className="search-bar">
@@ -92,12 +104,8 @@ const FilterComponent = ({ onSearch, onApplyFilters }) => {
           placeholder="Search for a play area"
           className="search-input"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && searchTerm) {
-              onSearch(searchTerm);
-              setSuggestions([]);
-            }q
+          onChange={(e) => {
+            handleSearchChange(e);
           }}
         />
         <button className="filter-button" onClick={toggleFilter}>

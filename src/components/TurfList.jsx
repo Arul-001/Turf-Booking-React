@@ -12,9 +12,6 @@ const TurfList = ({ turfs ,onSelectTurf}) => {
               <p><strong>City:</strong> <span>{turf.city}</span></p>
               <p><strong>Sport:</strong> <span>{turf.sports}</span></p>
               <p><strong>Type:</strong> <span>{turf.category}</span></p>
-              <p><strong>Surface Type:</strong> <span>{turf.surface}</span></p>
-              <p><strong>Turf Size:</strong> <span>{turf.size}</span></p>
-              <p><strong>Time:</strong> <span>{turf.time}</span></p>
               <p><strong>Price:</strong> ₹<span>{turf.price}</span>/hour</p>
             </div>
           </div>

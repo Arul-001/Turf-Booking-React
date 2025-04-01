@@ -29,12 +29,15 @@ const BookSlot = () => {
 
   const [filteredTurfs, setFilteredTurfs] = useState(turfsData);
   const [selectedTurf, setSelectedTurf] = useState(null);
+  const [previousSelectedTurf, setPreviousSelectedTurf] = useState(null);
 
   // Function to handle search
   const handleSearch = (query) => {
     const result = turfsData.filter((turf) =>
       turf.name.toLowerCase().includes(query.toLowerCase())
     );
+    setSelectedTurf(null);
+  setPreviousSelectedTurf(null);
     setFilteredTurfs(result);
   };
 
@@ -43,6 +46,7 @@ const BookSlot = () => {
     let result = turfsData.filter((turf) => {
       // Check category, city, sports, surface, and size
       return (
+        turf.name.toLowerCase().includes(filters.searchTerm) &&
         (!filters.category || turf.category === filters.category) &&
         (!filters.city || turf.city === filters.city) &&
         (!filters.sports || turf.sports === filters.sports) &&
@@ -54,18 +58,28 @@ const BookSlot = () => {
           (turf.price >= filters.priceRange[0] && turf.price <= filters.priceRange[1]))
       );
     });
+    setSelectedTurf(null);
+  setPreviousSelectedTurf(null);
 
     setFilteredTurfs(result);
   };
-  // Function to handle selecting a turf
   const handleSelectTurf = (turf) => {
-    console.log("Selected Turf:", turf); 
+    if (previousSelectedTurf) {
+      setFilteredTurfs((prev) => [...prev, previousSelectedTurf]);
+    }
+    setPreviousSelectedTurf(turf);
     setSelectedTurf(turf);
+    setFilteredTurfs((prev) => prev.filter((t) => t.id !== turf.id));
+    console.log("Selected Turf:", turf);
   };
 
   // Function to close the booking details
   const handleCloseBooking = () => {
-    setSelectedTurf(null);
+    if (selectedTurf) {
+      setFilteredTurfs((prev) => [...prev, selectedTurf]);
+      setSelectedTurf(null);
+    }
+    setPreviousSelectedTurf(null);
   };
 
   // Function to check if the time falls within the given range
@@ -81,8 +95,7 @@ const BookSlot = () => {
         <h1>Book a Turf or Play Area</h1>
         <p>Select the type of turf, location, and availability below to make your booking.</p>
         <FilterComponent onSearch={handleSearch} onApplyFilters={handleApplyFilters} />
-        {selectedTurf && <Booking turf={selectedTurf} />}
-        <Booking selectedTurf={selectedTurf} onClose={handleCloseBooking} />
+        {selectedTurf && <Booking selectedTurf={selectedTurf} onClose={handleCloseBooking} />}
         <TurfList turfs={filteredTurfs} onSelectTurf={handleSelectTurf} />
       </div>
     </section>
