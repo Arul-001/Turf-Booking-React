@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
-import Login from "./components/Login";
 import Products from "./components/Products";
 import Dashboard from "./components/Dashboard";
 import BookSlot from "./components/BookSlot";
@@ -11,7 +10,6 @@ import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
 import Footer from "./components/Footer";
 import TurfList from "./components/TurfList";
-import FilterComponent from "./components/FilterComponent";
 import "./App.css";
 import './index.css';
 
@@ -23,7 +21,6 @@ const App = () => {
       <div className="content">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/products" element={<Products />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/book-slot" element={<BookSlot />} />
