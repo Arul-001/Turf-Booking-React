@@ -1,5 +1,6 @@
-import React from "react";
+import React,{useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import UserContext from "./context/UserContext";
 import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
@@ -14,7 +15,21 @@ import "./App.css";
 import './index.css';
 
 const App = () => {
+  const [user, setUser] = useState(() => {
+    // Try to load user from localStorage on initial load
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user)); // Save user on any change
+    } else {
+      localStorage.removeItem("user"); // Optional: clean up on logout
+    }
+  }, [user]);
+  
   return (
+    <UserContext.Provider value={{ user, setUser }}>
     <div className="app-container">
       <ScrollToTop />
       <Navbar />
@@ -31,6 +46,7 @@ const App = () => {
       </div>
       <Footer />
     </div>
+    </UserContext.Provider>
   );
 };
 

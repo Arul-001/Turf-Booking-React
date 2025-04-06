@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import UserContext from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
+
 
 const Booking = ({ selectedTurf, onClose }) => {
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [currentDate, setCurrentDate] = useState(null);
   const [formData, setFormData] = useState({
@@ -10,12 +16,10 @@ const Booking = ({ selectedTurf, onClose }) => {
     hours: "",
   });
   const [errors, setErrors] = useState({});
-
   if (!selectedTurf) return null;
   const openingTime = parseInt(selectedTurf.time.split("-")[0]);
   const closingTime = parseInt(selectedTurf.time.split("-")[1]);
   const maxHours = closingTime - openingTime;
-
   const validateForm = () => {
     let newErrors = {};
     if (!formData.date) newErrors.date = "Date is required";
@@ -39,47 +43,44 @@ const Booking = ({ selectedTurf, onClose }) => {
   //   );
   // };
   const isDateEarlier = (givenDate) => {
-    if (!givenDate) return false; 
+    if (!givenDate) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const given = new Date(givenDate);
     if (isNaN(given.getTime())) return false;
-    given.setHours(0, 0, 0, 0); 
+    given.setHours(0, 0, 0, 0);
     if (given.getTime() === today.getTime()) {
       setCurrentDate(today);
-    console.log(currentDate);
+      console.log(currentDate);
     }
-    return given <= today; 
-};
+    return given <= today;
+  };
   const handleChange = (e) => {
-
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
     let newErrors = { ...errors };
-    // const todayString = new Date().toISOString().split("T")[0]; 
+    // const todayString = new Date().toISOString().split("T")[0];
     if (name === "date" && !value) {
       newErrors.date = "Date is required";
-    }
-     else if (name === "date" && isDateEarlier(value)) {
+    } else if (name === "date" && isDateEarlier(value)) {
       newErrors.date = "This Date Cant be applied";
-    }
-    else{
+    } else {
       delete newErrors.date;
     }
     if (name === "time") {
       if (!value) {
         newErrors.time = "Time is required";
-      } else{
+      } else {
         const selectedTime = parseInt(value.split(":")[0]);
         const maxBookableHours = closingTime - selectedTime;
         if (maxBookableHours <= 0) {
           newErrors.time = `Booking not possible after ${closingTime}:00`;
         } else if (maxBookableHours > maxHours) {
           newErrors.time = `Booking not possible before ${openingTime}:00`;
-        // }else if(currentDate === todayString && isTimeEarlier(value)) {
-        // console.log("Booking Over");
-        // newErrors.time = "Booking Over"; // Show an error message
+          // }else if(currentDate === todayString && isTimeEarlier(value)) {
+          // console.log("Booking Over");
+          // newErrors.time = "Booking Over"; // Show an error message
         } else {
           delete newErrors.time;
         }
@@ -107,24 +108,53 @@ const Booking = ({ selectedTurf, onClose }) => {
 
     setErrors(newErrors);
   };
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) return;
-    console.log({
-      Turf: selectedTurf.name,
-      Sport: selectedTurf.sports,
-      Type: selectedTurf.category,
-      Price: selectedTurf.price,
-      Date: formData.date,
-      Time: formData.time,
-      Players: formData.players,
-      Hours: formData.hours,
-      TotalAmount: formData.hours * selectedTurf.price,
-    });
+    // console.log({
+    //   Turf: selectedTurf.name,
+    //   Sport: selectedTurf.sports,
+    //   Type: selectedTurf.category,
+    //   Price: selectedTurf.price,
+    //   Date: formData.date,
+    //   Time: formData.time,
+    //   Players: formData.players,
+    //   Hours: formData.hours,
+    //   TotalAmount: formData.hours * selectedTurf.price,
+    // });
+    const bookingData = {
+      name: user.name,
+      email: user.email,
+      turf: selectedTurf.name,
+      sport: selectedTurf.sports,
+      type: selectedTurf.category,
+      price: selectedTurf.price,
+      date: formData.date,
+      time: formData.time,
+      players: formData.players,
+      hours: formData.hours,
+      totalAmount: formData.hours * selectedTurf.price,
+    };
+    console.log(bookingData);
+    try {
+      const response = await fetch("http://localhost:5000/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
+      });
 
-    alert("Booking Confirmed!");
-    setShowForm(false);
-    setFormData({ date: "", time: "", players: "", hours: "" });
-    setErrors({});
+      const result = await response.json();
+      if (response.ok) {
+        alert("Booking Confirmed!");
+        setShowForm(false);
+        setFormData({ date: "", time: "", players: "", hours: "" });
+        setErrors({});
+      } else {
+        alert(result.error || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert("Server error occurred");
+    }
   };
   const handleClose = () => {
     setFormData({ date: "", time: "", players: "", hours: "" });
@@ -168,18 +198,48 @@ const Booking = ({ selectedTurf, onClose }) => {
             </p>
           </div>
           <div className="button-container">
-            <button className="book-btn" onClick={() => setShowForm(true)}>
-              Book It
-            </button>
             <button className="close-btn" onClick={onClose}>
               Close
+            </button>
+            <button
+              className="book-btn"
+              onClick={() => {
+                if (!user?.name) {
+                  setShowLoginPrompt(true);
+                } else {
+                  setShowForm(true);
+                }
+              }}
+            >
+              Book It
             </button>
           </div>
         </div>
       </div>
+      {showLoginPrompt && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            <p>Please login to book a turf.</p>
+            <div className="popup-actions">
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="popup-login-btn"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setShowLoginPrompt(false)}
+                className="popup-cancel-btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showForm && (
-        <div className="overlay">
+        <div className="popup-overlay">
           <div className="popup">
             <h3>Book Your Slot</h3>
             <label>
@@ -249,6 +309,9 @@ const Booking = ({ selectedTurf, onClose }) => {
             <p>Total Amount: ₹{formData.hours * selectedTurf.price || 0}</p>
 
             <div className="button-container">
+              <button className="close-btn" onClick={handleClose}>
+                Cancel
+              </button>
               <button
                 className="book-slot-btn"
                 onClick={handleSubmit}
@@ -256,9 +319,8 @@ const Booking = ({ selectedTurf, onClose }) => {
               >
                 Book Slot
               </button>
-              <button className="close-btn" onClick={handleClose}>
-                Cancel
-              </button>
+              <p>Name: {user?.name}</p>
+              <p>Email: {user?.email}</p>
             </div>
           </div>
         </div>

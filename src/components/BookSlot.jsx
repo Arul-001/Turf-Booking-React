@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TurfList from "./TurfList"; // Component to display turfs
 import FilterComponent from "./FilterComponent"; // Component for filtering
 import Booking from "./Booking";
-
+import { useEffect } from "react";
 const BookSlot = () => {
   // Sample 25 records for turfs
   const turfsData = [
@@ -31,6 +31,11 @@ const BookSlot = () => {
   const [selectedTurf, setSelectedTurf] = useState(null);
   const [previousSelectedTurf, setPreviousSelectedTurf] = useState(null);
 
+  useEffect(() => {
+    if (selectedTurf) {
+      window.scrollTo({ top: 0, behavior: "smooth" }); // Smooth scrolling effect
+    }
+  }, [selectedTurf]);
   // Function to handle search
   const handleSearch = (query) => {
     const result = turfsData.filter((turf) =>
@@ -90,12 +95,14 @@ const BookSlot = () => {
   };
 
   return (
+    
     <section className="booking-hea">
+      
       <div className="booking">
         <h1>Book a Turf or Play Area</h1>
         <p>Select the type of turf, location, and availability below to make your booking.</p>
         <FilterComponent onSearch={handleSearch} onApplyFilters={handleApplyFilters} />
-        {selectedTurf && <Booking selectedTurf={selectedTurf} onClose={handleCloseBooking} />}
+        {selectedTurf && <Booking selectedTurf={selectedTurf} onClose={handleCloseBooking}  />}
         <TurfList turfs={filteredTurfs} onSelectTurf={handleSelectTurf} />
       </div>
     </section>
