@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import UserContext from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
-
 const Booking = ({ selectedTurf, onClose }) => {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
@@ -222,16 +221,16 @@ const Booking = ({ selectedTurf, onClose }) => {
             <p>Please login to book a turf.</p>
             <div className="popup-actions">
               <button
-                onClick={() => navigate("/dashboard")}
-                className="popup-login-btn"
-              >
-                Login
-              </button>
-              <button
                 onClick={() => setShowLoginPrompt(false)}
                 className="popup-cancel-btn"
               >
                 Cancel
+              </button>
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="popup-login-btn"
+              >
+                Login
               </button>
             </div>
           </div>
@@ -242,6 +241,13 @@ const Booking = ({ selectedTurf, onClose }) => {
         <div className="popup-overlay">
           <div className="popup">
             <h3>Book Your Slot</h3>
+            <div className="form-grid">
+            <label>
+              Name: <input type="text" value={user?.name || ""} disabled />
+            </label>
+            <label>
+              Email: <input type="text" value={user?.email || ""} disabled />
+            </label>
             <label>
               Turf Name:{" "}
               <input type="text" value={selectedTurf.name} disabled />
@@ -266,8 +272,9 @@ const Booking = ({ selectedTurf, onClose }) => {
                 onChange={handleChange}
                 required
               />
+              {errors.date && <p className="error-message">{errors.date}</p>}
             </label>
-            {errors.date && <p className="error-message">{errors.date}</p>}
+            
 
             <label>
               Time:{" "}
@@ -278,8 +285,8 @@ const Booking = ({ selectedTurf, onClose }) => {
                 onChange={handleChange}
                 required
               />
+               {errors.time && <p className="error-message">{errors.time}</p>}
             </label>
-            {errors.time && <p className="error-message">{errors.time}</p>}
 
             <label>
               No. of Players:{" "}
@@ -289,12 +296,11 @@ const Booking = ({ selectedTurf, onClose }) => {
                 value={formData.players}
                 onChange={handleChange}
                 required
-              />
+              />{errors.players && (
+                <p className="error-message">{errors.players}</p>
+              )}
             </label>
-            {errors.players && (
-              <p className="error-message">{errors.players}</p>
-            )}
-
+            
             <label>
               No. of Hours:{" "}
               <input
@@ -303,9 +309,9 @@ const Booking = ({ selectedTurf, onClose }) => {
                 value={formData.hours}
                 onChange={handleChange}
                 required
-              />
+              />{errors.hours && <p className="error-message">{errors.hours}</p>}
             </label>
-            {errors.hours && <p className="error-message">{errors.hours}</p>}
+            </div>
             <p>Total Amount: ₹{formData.hours * selectedTurf.price || 0}</p>
 
             <div className="button-container">
@@ -319,8 +325,6 @@ const Booking = ({ selectedTurf, onClose }) => {
               >
                 Book Slot
               </button>
-              <p>Name: {user?.name}</p>
-              <p>Email: {user?.email}</p>
             </div>
           </div>
         </div>

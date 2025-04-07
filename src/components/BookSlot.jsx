@@ -1,35 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import TurfList from "./TurfList"; // Component to display turfs
 import FilterComponent from "./FilterComponent"; // Component for filtering
 import Booking from "./Booking";
-import { useEffect } from "react";
-const BookSlot = () => {
-  // Sample 25 records for turfs
-  const turfsData = [
-    { id: 1, name: "Greenfield Arena", category: "Indoor", city: "New York", sports: "Football", surface: "Grass", size: "Large", days: ["Monday", "Wednesday", "Friday"], time: "9:00-20:00", price: 500 },
-    { id: 2, name: "Blue Sky Sports", category: "Outdoor", city: "Los Angeles", sports: "Basketball", surface: "Concrete", size: "Medium", days: ["Tuesday", "Thursday"], time: "10:00-18:00", price: 400 },
-    { id: 3, name: "Sunset Playgrounds", category: "Outdoor", city: "San Francisco", sports: "Tennis", surface: "Concrete", size: "Small", days: ["Monday", "Thursday"], time: "8:00-22:00", price: 350 },
-    { id: 4, name: "City Stadium", category: "Indoor", city: "Chicago", sports: "Football", surface: "Artificial Turf", size: "Large", days: ["Wednesday", "Saturday"], time: "6:00-19:00", price: 600 },
-    { id: 5, name: "Metro Sports Hub", category: "Outdoor", city: "Houston", sports: "Cricket", surface: "Synthetic", size: "Medium", days: ["Sunday", "Tuesday"], time: "7:00-21:00", price: 550 },
-    { id: 6, name: "Skyline Arena", category: "Indoor", city: "Miami", sports: "Badminton", surface: "Wood", size: "Small", days: ["Friday", "Saturday"], time: "9:00-17:00", price: 300 },
-    { id: 7, name: "Champion's Field", category: "Outdoor", city: "Seattle", sports: "Baseball", surface: "Grass", size: "Large", days: ["Monday", "Wednesday"], time: "11:00-23:00", price: 450 },
-    { id: 8, name: "Lakeside Courts", category: "Indoor", city: "Dallas", sports: "Basketball", surface: "Rubber", size: "Medium", days: ["Tuesday", "Thursday"], time: "12:00-20:00", price: 500 },
-    { id: 9, name: "Horizon Playhouse", category: "Outdoor", city: "Boston", sports: "Tennis", surface: "Hard Court", size: "Small", days: ["Wednesday", "Friday"], time: "7:00-22:00", price: 400 },
-    { id: 10, name: "Downtown Sports Club", category: "Indoor", city: "San Diego", sports: "Football", surface: "Synthetic", size: "Large", days: ["Saturday", "Sunday"], time: "6:00-18:00", price: 550 },
-    { id: 11, name: "Elite Arena", category: "Outdoor", city: "Atlanta", sports: "Basketball", surface: "Concrete", size: "Medium", days: ["Monday", "Thursday"], time: "8:00-19:00", price: 380},
-    { id: 12, name: "Victory Grounds", category: "Indoor", city: "Denver", sports: "Cricket", surface: "Grass", size: "Large", days: ["Tuesday", "Friday"], time: "10:00-21:00", price: 600 },
-    { id: 13, name: "Star Court", category: "Outdoor", city: "Las Vegas", sports: "Tennis", surface: "Clay", size: "Large", days: ["Wednesday", "Sunday"], time: "9:00-23:00", price: 420 },
-    { id: 14, name: "Prime Sports Complex", category: "Indoor", city: "Philadelphia", sports: "Badminton", surface: "Wood", size: "Medium", days: ["Thursday", "Saturday"], time: "7:00-20:00", price: 350 },
-    { id: 15, name: "Urban Play Zone", category: "Outdoor", city: "Phoenix", sports: "Football", surface: "Artificial Turf", size: "Large", days: ["Monday", "Friday"], time: "6:00-22:00", price: 580 },
-    { id: 16, name: "Speed Sports Park", category: "Indoor", city: "Detroit", sports: "Basketball", surface: "Rubber", size: "Medium", days: ["Tuesday", "Sunday"], time: "8:00-19:00", price: 470 },
-    { id: 17, name: "Olympic Club", category: "Outdoor", city: "Minneapolis", sports: "Tennis", surface: "Hard Court", size: "Small", days: ["Wednesday", "Thursday"], time: "9:00-21:00", price: 390 },
-    { id: 18, name: "Legends Arena", category: "Indoor", city: "Orlando", sports: "Cricket", surface: "Synthetic", size: "Large", days: ["Friday", "Sunday"], time: "10:00-20:00", price: 530 },
-    { id: 19, name: "Champion Turf", category: "Outdoor", city: "Portland", sports: "Football", surface: "Grass", size: "Medium", days: ["Monday", "Saturday"], time: "7:00-19:00", price: 500 },
-  ];
+import axios from "axios";
 
-  const [filteredTurfs, setFilteredTurfs] = useState(turfsData);
+const BookSlot = () => {
+  // // Sample 25 records for turfs
+  // const turfsData = [
+  //   { id: 1, name: "Greenfield Arena", category: "Indoor", city: "New York", sports: "Football", surface: "Grass", size: "Large", days: ["Monday", "Wednesday", "Friday"], time: "9:00-20:00", price: 500 },
+  //   { id: 2, name: "Blue Sky Sports", category: "Outdoor", city: "Los Angeles", sports: "Basketball", surface: "Concrete", size: "Medium", days: ["Tuesday", "Thursday"], time: "10:00-18:00", price: 400 },
+  //   { id: 3, name: "Sunset Playgrounds", category: "Outdoor", city: "San Francisco", sports: "Tennis", surface: "Concrete", size: "Small", days: ["Monday", "Thursday"], time: "8:00-22:00", price: 350 },
+  //   { id: 4, name: "City Stadium", category: "Indoor", city: "Chicago", sports: "Football", surface: "Artificial Turf", size: "Large", days: ["Wednesday", "Saturday"], time: "6:00-19:00", price: 600 },
+  //   { id: 5, name: "Metro Sports Hub", category: "Outdoor", city: "Houston", sports: "Cricket", surface: "Synthetic", size: "Medium", days: ["Sunday", "Tuesday"], time: "7:00-21:00", price: 550 },
+  //   { id: 6, name: "Skyline Arena", category: "Indoor", city: "Miami", sports: "Badminton", surface: "Wood", size: "Small", days: ["Friday", "Saturday"], time: "9:00-17:00", price: 300 },
+  //   { id: 7, name: "Champion's Field", category: "Outdoor", city: "Seattle", sports: "Baseball", surface: "Grass", size: "Large", days: ["Monday", "Wednesday"], time: "11:00-23:00", price: 450 },
+  //   { id: 8, name: "Lakeside Courts", category: "Indoor", city: "Dallas", sports: "Basketball", surface: "Rubber", size: "Medium", days: ["Tuesday", "Thursday"], time: "12:00-20:00", price: 500 },
+  //   { id: 9, name: "Horizon Playhouse", category: "Outdoor", city: "Boston", sports: "Tennis", surface: "Hard Court", size: "Small", days: ["Wednesday", "Friday"], time: "7:00-22:00", price: 400 },
+  //   { id: 10, name: "Downtown Sports Club", category: "Indoor", city: "San Diego", sports: "Football", surface: "Synthetic", size: "Large", days: ["Saturday", "Sunday"], time: "6:00-18:00", price: 550 },
+  //   { id: 11, name: "Elite Arena", category: "Outdoor", city: "Atlanta", sports: "Basketball", surface: "Concrete", size: "Medium", days: ["Monday", "Thursday"], time: "8:00-19:00", price: 380},
+  //   { id: 12, name: "Victory Grounds", category: "Indoor", city: "Denver", sports: "Cricket", surface: "Grass", size: "Large", days: ["Tuesday", "Friday"], time: "10:00-21:00", price: 600 },
+  //   { id: 13, name: "Star Court", category: "Outdoor", city: "Las Vegas", sports: "Tennis", surface: "Clay", size: "Large", days: ["Wednesday", "Sunday"], time: "9:00-23:00", price: 420 },
+  //   { id: 14, name: "Prime Sports Complex", category: "Indoor", city: "Philadelphia", sports: "Badminton", surface: "Wood", size: "Medium", days: ["Thursday", "Saturday"], time: "7:00-20:00", price: 350 },
+  //   { id: 15, name: "Urban Play Zone", category: "Outdoor", city: "Phoenix", sports: "Football", surface: "Artificial Turf", size: "Large", days: ["Monday", "Friday"], time: "6:00-22:00", price: 580 },
+  //   { id: 16, name: "Speed Sports Park", category: "Indoor", city: "Detroit", sports: "Basketball", surface: "Rubber", size: "Medium", days: ["Tuesday", "Sunday"], time: "8:00-19:00", price: 470 },
+  //   { id: 17, name: "Olympic Club", category: "Outdoor", city: "Minneapolis", sports: "Tennis", surface: "Hard Court", size: "Small", days: ["Wednesday", "Thursday"], time: "9:00-21:00", price: 390 },
+  //   { id: 18, name: "Legends Arena", category: "Indoor", city: "Orlando", sports: "Cricket", surface: "Synthetic", size: "Large", days: ["Friday", "Sunday"], time: "10:00-20:00", price: 530 },
+  //   { id: 19, name: "Champion Turf", category: "Outdoor", city: "Portland", sports: "Football", surface: "Grass", size: "Medium", days: ["Monday", "Saturday"], time: "7:00-19:00", price: 500 },
+  // ];
+  const [allTurfs, setAllTurfs] = useState([]);
+  const [filteredTurfs, setFilteredTurfs] = useState([]);
   const [selectedTurf, setSelectedTurf] = useState(null);
   const [previousSelectedTurf, setPreviousSelectedTurf] = useState(null);
+
+  useEffect(() => {
+    const fetchTurfs = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/turfs");
+        setAllTurfs(response.data);
+        setFilteredTurfs(response.data);
+      } catch (error) {
+        console.error("Error fetching turfs:", error);
+      }
+    };
+
+    fetchTurfs();
+  }, []);
 
   useEffect(() => {
     if (selectedTurf) {
@@ -38,7 +53,7 @@ const BookSlot = () => {
   }, [selectedTurf]);
   // Function to handle search
   const handleSearch = (query) => {
-    const result = turfsData.filter((turf) =>
+    const result = allTurfs.filter((turf) =>
       turf.name.toLowerCase().includes(query.toLowerCase())
     );
     setSelectedTurf(null);
@@ -48,7 +63,7 @@ const BookSlot = () => {
 
   // Function to handle filtering
   const handleApplyFilters = (filters) => {
-    let result = turfsData.filter((turf) => {
+    let result = allTurfs.filter((turf) => {
       // Check category, city, sports, surface, and size
       return (
         turf.name.toLowerCase().includes(filters.searchTerm) &&
@@ -74,7 +89,7 @@ const BookSlot = () => {
     }
     setPreviousSelectedTurf(turf);
     setSelectedTurf(turf);
-    setFilteredTurfs((prev) => prev.filter((t) => t.id !== turf.id));
+    setFilteredTurfs((prev) => prev.filter((t) => t._id !== turf._id));
     console.log("Selected Turf:", turf);
   };
 

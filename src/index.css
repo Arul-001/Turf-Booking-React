@@ -3,6 +3,10 @@
   padding:0px;
   font-family: Century;
 }
+.no-scroll {
+  overflow: hidden;
+}
+
 [class$="-head"]{
   background-image:linear-gradient(rgb(0,0,0,0.5),rgb(0,0,0,0.5),rgb(0,0,0,0.5)),url(../src/assets/background.jpeg);
   height:100vh;
@@ -788,6 +792,7 @@ text-align: center;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  overflow: auto;
 }
 
 .popup-box {
@@ -809,14 +814,18 @@ text-align: center;
 }
 
 .popup-login-btn,
-.popup-cancel-btn {
+.popup-cancel-btn,
+.popup-confirm-btn {
   padding: 8px 16px;
   border: none;
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
 }
-
+.popup-confirm-btn {
+  background-color: #ff0000;
+  color: white;
+}
 .popup-login-btn {
   background-color: #007bff;
   color: white;
@@ -834,10 +843,11 @@ text-align: center;
   padding: 20px;
   border-radius: 10px;
   width: 90%;
-  max-width: 400px;
-  text-align: left;
+  max-width: 900px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   animation: fadeIn 0.3s ease-in-out;
+  overflow-y: auto;
+  max-height: 90vh;
 }
 
 /* Fade-in Animation */
@@ -849,25 +859,36 @@ text-align: center;
 .popup h3 {
   text-align: center;
   margin-bottom: 10px;
-}
-
-.popup label {
-  display: block;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
   font-weight: bold;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 20px;
+  margin-bottom: 20px;
+}
+.popup label {
+  text-align: left;
+  display: flex;
+  flex-direction:column ;
+  font-weight: 500;
+  font-size: 0.95rem;
 }
 
 .popup input {
-  width: 100%;
-  padding: 5px;
-  margin-top: 3px;
+  width: 90%;
+  padding: 6px 8px;
+  margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
 .popup .button-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  gap: 10px;
 }
 /* Shop for Sports Equipment Page */
 .products {
