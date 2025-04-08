@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useEffect} from "react";
 
-const TurfList = ({ turfs ,onSelectTurf}) => {
+const TurfList = ({ turfs ,onSelectTurf ,visibleCount, setVisibleCount}) => {
+
+  // Load more turfs when user scrolls to the bottom
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
+        visibleCount < turfs.length
+      ) {
+        setVisibleCount((prev) => prev + 12);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [visibleCount, turfs.length]);
+
+  const visibleTurfs = turfs.slice(0, visibleCount);
+
   return (
     <div className="turf-container">
-      {turfs.length > 0 ? (
-        turfs.map((turf, index) => (
+      {visibleTurfs.length > 0 ? (
+        visibleTurfs.map((turf, index) => (
           <div key={index} className="turf-card"  onClick={() => onSelectTurf(turf)}>
             <img src={turf.image} alt={turf.name} className="turf-image" />
             <div className="turf-info">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import UserContext from "../context/UserContext";
-
+import { z } from "zod";
 export default function Dashboard() {
   const [bookings, setBookings] = useState([]);
   const { setUser } = useContext(UserContext);
@@ -13,7 +13,6 @@ export default function Dashboard() {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editFormData, setEditFormData] = useState({});
   const [editErrors, setEditErrors] = useState({});
-
   const [formData, setFormData] = useState({
     name: "",
     dob: "",
@@ -21,6 +20,7 @@ export default function Dashboard() {
     password: "",
     confirmPassword: "",
   });
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,7 +39,6 @@ export default function Dashboard() {
         });
     }
   }, []);
-
   useEffect(() => {
     if (currentUser?.email) {
       axios
@@ -54,14 +53,15 @@ export default function Dashboard() {
   }, [currentUser]);
   const fetchBookings = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/bookings/${currentUser.email}`);
+      const response = await fetch(
+        `http://localhost:5000/api/bookings/${currentUser.email}`
+      );
       const data = await response.json();
       setBookings(data);
     } catch (error) {
       console.error("Error fetching bookings:", error);
     }
   };
-  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -94,33 +94,29 @@ export default function Dashboard() {
       ...prev,
       [name]: value,
     }));
-  
-    // Optionally: Validate here
   };
-  
   const handleEditSubmit = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/bookings/${editFormData._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editFormData),
-      });
-  
+      const response = await fetch(
+        `http://localhost:5000/api/bookings/${editFormData._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editFormData),
+        }
+      );
+
       if (!response.ok) {
         throw new Error("Failed to update booking");
       }
-  
-      // ✅ Refresh updated data
       fetchBookings();
       setShowEditForm(false);
     } catch (err) {
       console.error("Error updating booking:", err);
     }
   };
-  
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isSignUp ? "signup" : "login";
@@ -139,7 +135,6 @@ export default function Dashboard() {
         };
     console.log("log-init");
     console.log("Sending data to backend:", payload);
-
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -153,7 +148,6 @@ export default function Dashboard() {
         alert(data.message || "Authentication failed");
         return;
       }
-
       localStorage.setItem("token", data.token);
       setCurrentUser(data.user);
       setIsLoggedIn(true);
@@ -162,7 +156,6 @@ export default function Dashboard() {
       alert("Server error");
     }
   };
-
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentUser(null);
@@ -180,12 +173,10 @@ export default function Dashboard() {
     return (
       <>
         <div className="dashboard-container">
-          <div className="dashboard-header">
+          <div className="dashboard-content">
             <button onClick={handleLogout} className="logout-btn">
               Logout
             </button>
-          </div>
-          <div className="dashboard-content">
             <h2>Welcome, {currentUser.name || "User"}!</h2>
             <div className="profile-section">
               <h3>User Profile</h3>
@@ -235,7 +226,6 @@ export default function Dashboard() {
                           >
                             ✏️
                           </span>
-
                           <span
                             className="action-icon delete-icon"
                             title="Delete"
@@ -279,92 +269,120 @@ export default function Dashboard() {
           </div>
         )}
         {showEditForm && (
-  <div className="popup-overlay">
-    <div className="popup">
-      <h3>Edit Booking</h3>
-      <div className="form-grid">
-        <label>
-          Name: <input type="text" value={editFormData.name || ""} disabled />
-        </label>
-        <label>
-          Email: <input type="text" value={editFormData.email || ""} disabled />
-        </label>
-        <label>
-          Turf: <input type="text" value={editFormData.turf || ""} disabled />
-        </label>
-        <label>
-          Sport: <input type="text" value={editFormData.sport || ""} disabled />
-        </label>
-        <label>
-          Type: <input type="text" value={editFormData.type || ""} disabled />
-        </label>
-        <label>
-          Price: <input type="text" value={`₹${editFormData.price}`} disabled />
-        </label>
+          <div className="popup-overlay">
+            <div className="popup">
+              <h3>Edit Booking</h3>
+              <div className="form-grid">
+                <label>
+                  Name:{" "}
+                  <input type="text" value={editFormData.name || ""} disabled />
+                </label>
+                <label>
+                  Email:{" "}
+                  <input
+                    type="text"
+                    value={editFormData.email || ""}
+                    disabled
+                  />
+                </label>
+                <label>
+                  Turf:{" "}
+                  <input type="text" value={editFormData.turf || ""} disabled />
+                </label>
+                <label>
+                  Sport:{" "}
+                  <input
+                    type="text"
+                    value={editFormData.sport || ""}
+                    disabled
+                  />
+                </label>
+                <label>
+                  Type:{" "}
+                  <input type="text" value={editFormData.type || ""} disabled />
+                </label>
+                <label>
+                  Price:{" "}
+                  <input
+                    type="text"
+                    value={`₹${editFormData.price}`}
+                    disabled
+                  />
+                </label>
+                <label>
+                  Date:{" "}
+                  <input
+                    type="date"
+                    name="date"
+                    value={editFormData.date || ""}
+                    onChange={handleEditChange}
+                  />
+                  {editErrors.date && (
+                    <p className="error-message">{editErrors.date}</p>
+                  )}
+                </label>
 
-        <label>
-          Date:{" "}
-          <input
-            type="date"
-            name="date"
-            value={editFormData.date || ""}
-            onChange={handleEditChange}
-          />
-          {editErrors.date && <p className="error-message">{editErrors.date}</p>}
-        </label>
+                <label>
+                  Time:{" "}
+                  <input
+                    type="time"
+                    name="time"
+                    value={editFormData.time || ""}
+                    onChange={handleEditChange}
+                  />
+                  {editErrors.time && (
+                    <p className="error-message">{editErrors.time}</p>
+                  )}
+                </label>
 
-        <label>
-          Time:{" "}
-          <input
-            type="time"
-            name="time"
-            value={editFormData.time || ""}
-            onChange={handleEditChange}
-          />
-          {editErrors.time && <p className="error-message">{editErrors.time}</p>}
-        </label>
+                <label>
+                  No. of Players:{" "}
+                  <input
+                    type="number"
+                    name="players"
+                    value={editFormData.players || ""}
+                    onChange={handleEditChange}
+                  />
+                  {editErrors.players && (
+                    <p className="error-message">{editErrors.players}</p>
+                  )}
+                </label>
 
-        <label>
-          No. of Players:{" "}
-          <input
-            type="number"
-            name="players"
-            value={editFormData.players || ""}
-            onChange={handleEditChange}
-          />
-          {editErrors.players && <p className="error-message">{editErrors.players}</p>}
-        </label>
-
-        <label>
-          No. of Hours:{" "}
-          <input
-            type="number"
-            name="hours"
-            value={editFormData.hours || ""}
-            onChange={handleEditChange}
-          />
-          {editErrors.hours && <p className="error-message">{editErrors.hours}</p>}
-        </label>
-      </div>
-
-      <p>Editing Charge(10%): ₹{(editFormData.hours || 0) * (editFormData.price*0.1 || 0)}</p>
-
-      <div className="button-container">
-        <button className="close-btn" onClick={() => setShowEditForm(false)}>
-          Cancel
-        </button>
-        <button
-          className="book-slot-btn"
-          onClick={handleEditSubmit}
-          disabled={Object.keys(editErrors).length > 0}
-        >
-          Update Booking
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+                <label>
+                  No. of Hours:{" "}
+                  <input
+                    type="number"
+                    name="hours"
+                    value={editFormData.hours || ""}
+                    onChange={handleEditChange}
+                  />
+                  {editErrors.hours && (
+                    <p className="error-message">{editErrors.hours}</p>
+                  )}
+                </label>
+              </div>
+              <p>
+                Editing Charge(10%): ₹
+                {(editFormData.hours || 0) * (editFormData.price * 0.1 || 0)}
+              </p>
+              <div className="button-container">
+                <button
+                  className="close-btn"
+                  onClick={() => setShowEditForm(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="book-slot-btn"
+                  onClick={handleEditSubmit}
+                  disabled={Object.keys(editErrors).length > 0}
+                >
+                  Update Booking
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </>
     );
   }

@@ -31,7 +31,7 @@ const BookSlot = () => {
   const [filteredTurfs, setFilteredTurfs] = useState([]);
   const [selectedTurf, setSelectedTurf] = useState(null);
   const [previousSelectedTurf, setPreviousSelectedTurf] = useState(null);
-
+  const [visibleCount, setVisibleCount] = useState(12);
   useEffect(() => {
     const fetchTurfs = async () => {
       try {
@@ -80,7 +80,7 @@ const BookSlot = () => {
     });
     setSelectedTurf(null);
   setPreviousSelectedTurf(null);
-
+  setVisibleCount(12);
     setFilteredTurfs(result);
   };
   const handleSelectTurf = (turf) => {
@@ -118,7 +118,8 @@ const BookSlot = () => {
         <p>Select the type of turf, location, and availability below to make your booking.</p>
         <FilterComponent onSearch={handleSearch} onApplyFilters={handleApplyFilters} />
         {selectedTurf && <Booking selectedTurf={selectedTurf} onClose={handleCloseBooking}  />}
-        <TurfList turfs={filteredTurfs} onSelectTurf={handleSelectTurf} />
+        <TurfList turfs={filteredTurfs} visibleCount={visibleCount}
+        setVisibleCount={setVisibleCount} onSelectTurf={handleSelectTurf} />
       </div>
     </section>
   );

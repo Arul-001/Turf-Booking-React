@@ -22,7 +22,6 @@
 height:100vh;
 }
 nav{
-  width: 100%;
   background-color:  #333;
   position: sticky; 
   top:0;
@@ -228,7 +227,6 @@ height: 60vh;
 }
 footer {
   display: grid;
-  width:100%;
   grid-template-columns: 40% 25% 25% ;
   grid-gap:5% ;
   background-color: #333;
@@ -509,7 +507,7 @@ footer h5{
 }
 
 .logout-btn {
-  background-color: #ff4d4d;
+  background-color: #ec4f4f;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -517,8 +515,7 @@ footer h5{
   font-size: 16px;
   border-radius: 5px;
   position:absolute;
-  left:40vw;
-
+  right:20px;
 }
 
 .logout-btn:hover {
@@ -682,7 +679,6 @@ footer h5{
 
 /* Turf/Play Area Booking Page */
 .booking {
-  width: 100%;
   padding: 10px;
   background-image:linear-gradient(rgb(0,0,0,0.5),rgb(0,0,0,0.5),rgb(0,0,0,0.5)),url(../src/assets/Booking-Back.jpg);
   background-size: cover;
@@ -938,7 +934,9 @@ text-align: center;
 
 .about {
   width: 70%;
-  background-color: #ae70f0;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 30px;
 }
 
 .about p {
@@ -967,6 +965,9 @@ text-align: center;
 /* Contact Us Page */
 .contact {
   width: 70%;
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
 }
 
 .contact-info {
