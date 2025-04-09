@@ -3,7 +3,7 @@ import TurfList from "./TurfList"; // Component to display turfs
 import FilterComponent from "./FilterComponent"; // Component for filtering
 import Booking from "./Booking";
 import axios from "axios";
-
+const baseURL = import.meta.env.VITE_API_URL;
 const BookSlot = () => {
   // // Sample 25 records for turfs
   // const turfsData = [
@@ -35,7 +35,7 @@ const BookSlot = () => {
   useEffect(() => {
     const fetchTurfs = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/turfs");
+        const response = await axios.get(`${baseURL}/api/turfs`);
         setAllTurfs(response.data);
         setFilteredTurfs(response.data);
       } catch (error) {

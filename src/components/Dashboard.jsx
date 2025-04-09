@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import UserContext from "../context/UserContext";
 import { z } from "zod";
+const baseURL = import.meta.env.VITE_API_URL;
 export default function Dashboard() {
   const [bookings, setBookings] = useState([]);
   const { setUser } = useContext(UserContext);
@@ -26,7 +27,7 @@ export default function Dashboard() {
     const token = localStorage.getItem("token");
     if (token) {
       // Fetch user data from backend using token
-      fetch("http://localhost:5000/api/auth/me", {
+      fetch(`${baseURL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
@@ -42,7 +43,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (currentUser?.email) {
       axios
-        .get(`http://localhost:5000/api/bookings/${currentUser.email}`)
+        .get(`${baseURL}/api/bookings/${currentUser.email}`)
         .then((res) => {
           setBookings(res.data);
         })
@@ -54,7 +55,7 @@ export default function Dashboard() {
   const fetchBookings = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/bookings/${currentUser.email}`
+        `${baseURL}/api/bookings/${currentUser.email}`
       );
       const data = await response.json();
       setBookings(data);
@@ -68,7 +69,7 @@ export default function Dashboard() {
   const handleConfirmDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/bookings/${selectedBookingId}`,
+        `${baseURL}/api/bookings/${selectedBookingId}`,
         {
           method: "DELETE",
         }
@@ -98,7 +99,7 @@ export default function Dashboard() {
   const handleEditSubmit = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/bookings/${editFormData._id}`,
+        `${baseURL}/api/bookings/${editFormData._id}`,
         {
           method: "PUT",
           headers: {
@@ -120,7 +121,7 @@ export default function Dashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isSignUp ? "signup" : "login";
-    const url = `http://localhost:5000/api/auth/${endpoint}`;
+    const url = `${baseURL}/api/auth/${endpoint}`;
 
     const payload = isSignUp
       ? {

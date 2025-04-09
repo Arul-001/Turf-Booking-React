@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import UserContext from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+const baseURL = import.meta.env.VITE_API_URL;
 
 const Booking = ({ selectedTurf, onClose }) => {
   const navigate = useNavigate();
@@ -135,7 +136,7 @@ const Booking = ({ selectedTurf, onClose }) => {
     };
     console.log(bookingData);
     try {
-      const response = await fetch("http://localhost:5000/api/bookings", {
+      const response = await fetch(`${baseURL}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bookingData),
