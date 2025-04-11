@@ -29,84 +29,162 @@ const Booking = ({ selectedTurf, onClose }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  // const isTimeEarlier = (givenTime) => {
-  //   if (!givenTime) return false; // Avoid errors if time is empty
+ 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({ ...formData, [name]: value });
 
-  //   const now = new Date();
-  //   const currentHours = now.getHours();
-  //   const currentMinutes = now.getMinutes();
-  //   const [givenHours, givenMinutes] = givenTime.split(":").map(Number);
+  //   let newErrors = { ...errors };
+  //   // const todayString = new Date().toISOString().split("T")[0];
+  //   if (name === "date" && !value) {
+  //     newErrors.date = "Date is required";
+  //   } else if (name === "date" && isDateEarlier(value)) {
+  //     newErrors.date = "This Date Cant be applied";
+  //   } else {
+  //     delete newErrors.date;
+  //   }
+  //   if (name === "time") {
+  //     if (!value) {
+  //       newErrors.time = "Time is required";
+  //     } else {
+  //       const selectedTime = parseInt(value.split(":")[0]);
+  //       const maxBookableHours = closingTime - selectedTime;
+  //       if (maxBookableHours <= 0) {
+  //         newErrors.time = `Booking not possible after ${closingTime}:00`;
+  //       } else if (maxBookableHours > maxHours) {
+  //         newErrors.time = `Booking not possible before ${openingTime}:00`;
+  //         // }else if(currentDate === todayString && isTimeEarlier(value)) {
+  //         // console.log("Booking Over");
+  //         // newErrors.time = "Booking Over"; // Show an error message
+  //       } else {
+  //         delete newErrors.time;
+  //       }
+  //     }
+  //   }
+  //   if (name === "players" && (!value || value <= 0)) {
+  //     newErrors.players = "Number of players is required";
+  //   } else {
+  //     delete newErrors.players;
+  //   }
 
-  //   return (
-  //     currentHours > givenHours ||
-  //     (currentHours === givenHours && currentMinutes > givenMinutes)
-  //   );
+  //   if (name === "hours") {
+  //     if (!value || value <= 0) {
+  //       newErrors.hours = "Number of hours is required";
+  //     } else {
+  //       const selectedTime = parseInt(formData.time.split(":")[0] || 0);
+  //       const maxBookableHours = closingTime - selectedTime;
+  //       if (value > maxBookableHours) {
+  //         newErrors.hours = `Only ${maxBookableHours} hour(s) can be booked`;
+  //       } else {
+  //         delete newErrors.hours;
+  //       }
+  //     }
+  //   }
+
+  //   setErrors(newErrors);
   // };
-  const isDateEarlier = (givenDate) => {
-    if (!givenDate) return false;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const given = new Date(givenDate);
-    if (isNaN(given.getTime())) return false;
-    given.setHours(0, 0, 0, 0);
-    if (given.getTime() === today.getTime()) {
-      setCurrentDate(today);
-      console.log(currentDate);
-    }
-    return given <= today;
-  };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-
-    let newErrors = { ...errors };
-    // const todayString = new Date().toISOString().split("T")[0];
-    if (name === "date" && !value) {
-      newErrors.date = "Date is required";
-    } else if (name === "date" && isDateEarlier(value)) {
-      newErrors.date = "This Date Cant be applied";
-    } else {
-      delete newErrors.date;
+  
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  
+    const now = new Date();
+    const currentDate = now.toISOString().split("T")[0];
+    const currentTimeFloat = now.getHours() + now.getMinutes() / 60;
+  
+    const openingTime = parseFloat(selectedTurf.time.split("-")[0]);    
+    const closingTime = parseFloat(selectedTurf.time.split("-")[1]);   
+  
+    const timeToFloat = (timeStr) => {
+      if (!timeStr) return 0;
+      const [h, m] = timeStr.split(":").map(Number);
+      return h + m / 60;
+    };
+  
+    const updatedData = {
+      ...formData,
+      [name]: value,
+    };
+  
+    // Copy previous errors
+    const updatedErrors = { ...errors };
+  
+    // DATE VALIDATION
+    if (name === "date"|| name==="time") {
+      const bookingDate = new Date(updatedData.date);
+      const today = new Date(currentDate);
+  
+      if (bookingDate < today) {
+        updatedErrors.date = "Booking date cannot be in the past";
+      } else {
+        delete updatedErrors.date;
+      }
+  
+      // If booking for today, check time + 30 mins
+      const isToday = value === currentDate;
+      if (isToday && updatedData.time) {
+        const bookingTime = timeToFloat(updatedData.time);
+        if (bookingTime < currentTimeFloat + 0.5) {
+          updatedErrors.time = "Booking time must be at least 30 minutes from now";
+        } else {
+          delete updatedErrors.time;
+        }
+      }
+      if (bookingDate > today)
+        delete updatedErrors.time;
     }
+  
+    // TIME VALIDATION
     if (name === "time") {
-      if (!value) {
-        newErrors.time = "Time is required";
+      const bookingTime = timeToFloat(value);
+  
+      if (bookingTime < openingTime || bookingTime > closingTime - 1) {
+        updatedErrors.time = `Time must be between ${openingTime.toFixed(2)} and ${(closingTime - 1).toFixed(2)}`;
+      } else if (updatedData.date === currentDate && bookingTime < currentTimeFloat + 0.5) {
+        updatedErrors.time = "Booking time must be at least 30 minutes from now";
       } else {
-        const selectedTime = parseInt(value.split(":")[0]);
-        const maxBookableHours = closingTime - selectedTime;
-        if (maxBookableHours <= 0) {
-          newErrors.time = `Booking not possible after ${closingTime}:00`;
-        } else if (maxBookableHours > maxHours) {
-          newErrors.time = `Booking not possible before ${openingTime}:00`;
-          // }else if(currentDate === todayString && isTimeEarlier(value)) {
-          // console.log("Booking Over");
-          // newErrors.time = "Booking Over"; // Show an error message
+        delete updatedErrors.time;
+      }
+  
+      // If hours exist, validate combined time
+      if (updatedData.hours) {
+        const end = bookingTime + parseInt(updatedData.hours);
+        if (end > closingTime) {
+          updatedErrors.hours = `Booking exceeds closing time of ${closingTime.toFixed(2)}`;
         } else {
-          delete newErrors.time;
+          delete updatedErrors.hours;
         }
       }
     }
-    if (name === "players" && (!value || value <= 0)) {
-      newErrors.players = "Number of players is required";
-    } else {
-      delete newErrors.players;
+  
+    // PLAYERS VALIDATION
+    if (name === "players") {
+      if (value <= 0 || value > 15) {
+        updatedErrors.players = "Number of players must be between 1 and 15";
+      } else {
+        delete updatedErrors.players;
+      }
     }
-
+  
+    // HOURS VALIDATION
     if (name === "hours") {
-      if (!value || value <= 0) {
-        newErrors.hours = "Number of hours is required";
+      const hoursVal = parseInt(value);
+      const bookingTime = timeToFloat(updatedData.time);
+      const end = bookingTime + hoursVal;
+  
+      if (hoursVal <= 0) {
+        updatedErrors.hours = "Number of hours must be greater than 0";
+      } else if (updatedData.time && end > closingTime) {
+        updatedErrors.hours = `Booking exceeds closing time of ${closingTime.toFixed(2)}`;
       } else {
-        const selectedTime = parseInt(formData.time.split(":")[0] || 0);
-        const maxBookableHours = closingTime - selectedTime;
-        if (value > maxBookableHours) {
-          newErrors.hours = `Only ${maxBookableHours} hour(s) can be booked`;
-        } else {
-          delete newErrors.hours;
-        }
+        delete updatedErrors.hours;
       }
     }
-
-    setErrors(newErrors);
+  
+    setErrors(updatedErrors);
   };
   const handleSubmit = async () => {
     if (!validateForm()) return;
